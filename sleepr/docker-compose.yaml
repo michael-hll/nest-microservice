@@ -2,34 +2,39 @@ version: "3.8"
 
 services:
   reservations:
+    container_name: reservations
     build:
       context: .
       dockerfile: ./apps/reservations/Dockerfile
-      target: production
-    command: npm run start:prod
+      target: development
+    command: npm run start:dev reservations
     ports:
-      - '3001:3000'
-    environment:
-      - DATABASE_HOST=postgres
-      - DATABASE_PORT=5432
-      - DATABASE_NAME=sleepr
-      - DATABASE_USER=postgres
-      - DATABASE_PASSWORD=Password123
-      # JWT
-      - JWT_SECRET=YOUR_JWT_SECRET
-      - JWT_TOKEN_AUDIENCE=localhost:3001
-      - JWT_TOKEN_ISSUER=localhost:3001
-      - JWT_ACCESS_TOKEN_TTL=86400
-      - JWT_REFRESH_TOKEN_TTL=86400
-      # REDIS
-      - REDIS_HOST=localhost
-      - REDIS_PORT=6379
+      - '3100:3100'
+    env_file:
+      - ./apps/reservations/.env
+    volumes:
+      - .:/usr/src/app
+    depends_on:
+      - postgres
+  
+  auth:
+    container_name: auth
+    build:
+      context: .
+      dockerfile: ./apps/auth/Dockerfile
+      target: development
+    command: npm run start:dev auth
+    ports:
+      - '3001:3001'
+    env_file:
+      - ./apps/auth/.env
     volumes:
       - .:/usr/src/app
     depends_on:
       - postgres
 
   postgres:
+    container_name: postgres
     image: postgres
     volumes: 
       - db:/var/lib/postgresql/data
@@ -40,8 +45,8 @@ services:
       - 5432:5432
 
   pgadmin:
+    container_name: pgadmin4
     image: dpage/pgadmin4
-    container_name: pgadmin4_container
     restart: always
     ports:
       - 8888:80
@@ -52,6 +57,7 @@ services:
       - pgadmin-data:/var/lib/pgadmin
   
   redis:
+    container_name: redis
     image: redis
     ports:
       - 6379:6379

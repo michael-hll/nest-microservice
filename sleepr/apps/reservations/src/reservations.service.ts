@@ -13,11 +13,11 @@ export class ReservationsService {
     private readonly reservationsRepository: Repository<Reservation>,
   ) { }
 
-  create(createReservationDto: CreateReservationDto) {
+  create(createReservationDto: CreateReservationDto, userId: string) {
     const reservation = this.reservationsRepository.create({
       ...createReservationDto,
       timestamp: new Date(),
-      user_id: '123',
+      user_id: userId,
     });
     return this.reservationsRepository.save(reservation);
   }
