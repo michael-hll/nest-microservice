@@ -17,10 +17,14 @@ import { ConfigModule } from '../config/config.module';
           database: configService.get('DATABASE_NAME'),
           autoLoadEntities: true,
           synchronize: true,
-          logging: ['query'],
+          //logging: ['query'],
         }),
       inject: [ConfigService],
     }),
   ],
 })
-export class DatabaseModule { } 
+export class DatabaseModule { 
+  static forFeature<T>(entities: any[]) {
+    return TypeOrmModule.forFeature(entities);
+  }
+} 

@@ -1,0 +1,63 @@
+version: "3.8"
+
+services:
+  reservations:
+    build:
+      context: .
+      dockerfile: ./apps/reservations/Dockerfile
+      target: production
+    command: npm run start:prod
+    ports:
+      - '3001:3000'
+    environment:
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=sleepr
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=Password123
+      # JWT
+      - JWT_SECRET=YOUR_JWT_SECRET
+      - JWT_TOKEN_AUDIENCE=localhost:3001
+      - JWT_TOKEN_ISSUER=localhost:3001
+      - JWT_ACCESS_TOKEN_TTL=86400
+      - JWT_REFRESH_TOKEN_TTL=86400
+      # REDIS
+      - REDIS_HOST=localhost
+      - REDIS_PORT=6379
+    volumes:
+      - .:/usr/src/app
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres
+    volumes: 
+      - db:/var/lib/postgresql/data
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: Password123
+    ports:
+      - 5432:5432
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4_container
+    restart: always
+    ports:
+      - 8888:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: test@test.com
+      PGADMIN_DEFAULT_PASSWORD: Password123
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+  
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+    restart: always
+
+volumes:
+  db:
+    driver: local
+  pgadmin-data:
