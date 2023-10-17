@@ -20,7 +20,10 @@ export class ReservationsService {
 
   async create(createReservationDto: CreateReservationDto, userId: string) {
     return await this.paymentService
-      .send('create_charge', createReservationDto.charge)
+      .send('create_charge', {
+        ...createReservationDto.charge,
+        email: userId,
+      })
       .pipe(
         map(async (res) => {
           const reservation = await this.reservationsRepository.create({
