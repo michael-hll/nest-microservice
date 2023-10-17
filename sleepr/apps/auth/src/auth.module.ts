@@ -34,6 +34,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
         JWT_ACCESS_TOKEN_TTL: Joi.required(),
         JWT_REFRESH_TOKEN_TTL: Joi.required(),
         HTTP_PORT: Joi.required(),   
+        TCP_PORT: Joi.required(),
       }),
     }),
   ],

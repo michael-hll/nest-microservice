@@ -33,6 +33,20 @@ services:
     depends_on:
       - postgres
 
+  payments:
+    container_name: payments
+    build:
+      context: .
+      dockerfile: ./apps/payments/Dockerfile
+      target: development
+    command: npm run start:dev payments
+    ports:
+      - '3200:3200'
+    env_file:
+      - ./apps/payments/.env
+    volumes:
+      - .:/usr/src/app
+    
   postgres:
     container_name: postgres
     image: postgres

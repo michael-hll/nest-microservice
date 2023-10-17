@@ -7,7 +7,7 @@ import { LoggerModule } from '@app/common/logger/logger.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as Joi from '@hapi/joi';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { AUTH_SERVICE } from '@app/common/constants/services';
+import { AUTH_SERVICE, PAYMENTS_SERVICE } from '@app/common/constants/services';
 
 @Module({
   imports: [
@@ -23,6 +23,10 @@ import { AUTH_SERVICE } from '@app/common/constants/services';
         DATABASE_USER: Joi.required(),
         DATABASE_PASSWORD: Joi.required(),
         HTTP_PORT: Joi.required(),
+        AUTH_HOST: Joi.required(),
+        AUTH_PORT: Joi.required(),
+        PAYMENTS_HOST: Joi.required(),
+        PAYMENTS_PORT: Joi.required(),
       }),
     }),
     ClientsModule.registerAsync([
@@ -33,6 +37,19 @@ import { AUTH_SERVICE } from '@app/common/constants/services';
           options: {
             host: configService.get('AUTH_HOST'),
             port: configService.get('AUTH_PORT'),
+          }
+        }),
+        inject: [ConfigService]
+      }
+    ]),
+    ClientsModule.registerAsync([
+      {
+        name: PAYMENTS_SERVICE,
+        useFactory: (configService: ConfigService) => ({
+          transport: Transport.TCP,
+          options: {
+            host: configService.get('PAYMENTS_HOST'),
+            port: configService.get('PAYMENTS_PORT'),
           }
         }),
         inject: [ConfigService]

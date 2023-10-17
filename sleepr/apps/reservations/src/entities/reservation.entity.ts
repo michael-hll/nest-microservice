@@ -17,10 +17,7 @@ export class Reservation {
 
   @Column()
   user_id: string;
-
-  @Column()
-  place_id: string;
-
+  
   @Column()
   invoice_id: string;
 }

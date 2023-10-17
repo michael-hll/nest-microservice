@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, BadRequestException } from '@nestjs/common';
 import { ReservationsService } from './reservations.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
 import { UpdateReservationDto } from './dto/update-reservation.dto';
@@ -15,7 +15,11 @@ export class ReservationsController {
   async create(@Body() createReservationDto: CreateReservationDto,
   @CurrentUser() user: UserDto
   ) {
-    return this.reservationsService.create(createReservationDto, user.email);
+    try{
+      return this.reservationsService.create(createReservationDto, user.email);  
+    }catch(err){
+      throw new BadRequestException(err);
+    }
   }
 
   @Get()
